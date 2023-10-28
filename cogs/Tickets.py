@@ -7,14 +7,43 @@ from discord.ext import commands
 import datetime
 
 
-async def ticketembed(bot, user, reason):
+def ticketmessageembed():
+    embed = discord.Embed(title="**Tickets**",
+                          description=f"Change me",
+                          color=discord.Color.orange())
+    embed.set_footer(text="©️ ServerOwner 2023")
+    return embed
+
+
+async def ticketembed(user, reason, server):
     embed = discord.Embed(title="ServerOwner | New Ticket!",
                           description=f"""Hello, {user.mention}. Thank you for reaching out to our Support Team! We'll be with you shortly. In the interim, please provide a detailed description of your concerns.""",
                           color=discord.Color.orange(), timestamp=datetime.datetime.now())
     embed.add_field(name=f"Reason:", value=reason, inline=True)
-    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1163188020170731611/1163188105390587985/KlqjzcD.png?ex=653eaa57&is=652c3557&hm=1260ccaae3f3b17e890924fddbaf779f5379e9a136fe2c0cb5e7de68bdcae61c&")
+    embed.set_thumbnail(url=server.icon.url)
     embed.set_footer(text="©️ ServerOwner 2023")
     return embed
+
+
+class ticketbutton(discord.ui.View):
+
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Create Ticket", emoji="📨", style=discord.ButtonStyle.blurple,
+                       custom_id="ticketbutton")
+    async def gray_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            existticket = discord.utils.get(interaction.guild.channels,
+                                            name=f"ticket-{interaction.user.name.lower()}")
+            if existticket:
+                await interaction.response.send_message(
+                    content=f"You already have an existing ticket: {existticket.mention}.",
+                    ephemeral=True)
+            else:
+                await interaction.response.send_modal(Ticketmodal(interaction.client))
+        except Exception as e:
+            print(e)
 
 
 class Ticketmodal(ui.Modal, title='Ticket Creation'):
@@ -41,7 +70,7 @@ class Ticketmodal(ui.Modal, title='Ticket Creation'):
                                                         ephemeral=True)
                 await ticketchan.send(
                     content=f"{discord.utils.get(interaction.guild.roles, id=1156730288135753829).mention}",
-                    embed=await ticketembed(self.bot, interaction.user, self.reason),
+                    embed=await ticketembed(interaction.user, self.reason, interaction.guild),
                     view=ticketbuttonpanel())
 
             else:  # If for some reason the ticket category can't be found, make the channel anyway.
@@ -57,7 +86,7 @@ class Ticketmodal(ui.Modal, title='Ticket Creation'):
                 await interaction.response.send_message(content=f"Ticket created in {ticketchan.mention}!",
                                                         ephemeral=True)
                 await ticketchan.send(
-                    embed=await ticketembed(self.bot, interaction.user, self.reason),
+                    embed=await ticketembed(interaction.user, self.reason, interaction.guild),
                     view=ticketbuttonpanel())
         except Exception as e:
             print(e)
@@ -107,17 +136,12 @@ class ticketcmd(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.has_permissions(manage_channels=True)
     @app_commands.command(name="ticket", description="Command used to make a ticket.")
-    async def ticket(self, interaction: discord.Interaction) -> None:
+    async def ticket(self, interaction: discord.Interaction, channel: discord.TextChannel) -> None:
         try:
-            existticket = discord.utils.get(interaction.guild.channels,
-                                            name=f"ticket-{interaction.user.name.lower()}")
-            if existticket:
-                await interaction.response.send_message(
-                    content=f"You already have an existing ticket: {existticket.mention}.",
-                    ephemeral=True)
-            else:
-                await interaction.response.send_modal(Ticketmodal(self.bot))
+            await channel.send(embed=ticketmessageembed(), view=ticketbutton())
+            await interaction.response.send_message(content=f"Ticket message created in {channel.mention}", ephemeral=True)
         except Exception as e:
             print(e)
 
@@ -186,3 +210,4 @@ class ticketcmd(commands.Cog):
 async def setup(bot):
     await bot.add_cog(ticketcmd(bot))
     bot.add_view(ticketbuttonpanel())
+    bot.add_view(ticketbutton())

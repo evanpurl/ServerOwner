@@ -2,7 +2,6 @@ import discord
 import os
 
 os.environ['OWNERID'] = '979797311792222208'  # Qezy
-os.environ['BOT_TOKEN'] = 'Hidden'
 os.environ['BOT_DB'] = 'MySQL'
 os.environ['BOT_VERSION'] = 'v0.01'
 

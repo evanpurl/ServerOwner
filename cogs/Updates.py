@@ -25,7 +25,7 @@ class Updates(commands.Cog):
 
                 channel = discord.utils.get(interaction.guild.channels, id=self.channel)
 
-                await interaction.response.send_modal(Updatemodal(self.client, channel, topic.name))
+                await interaction.response.send_modal(Updatemodal(self.bot, channel, topic.name))
             else:
                 await interaction.response.send_message(content=f"You do not have permission to run this command.",
                                                         ephemeral=True)
