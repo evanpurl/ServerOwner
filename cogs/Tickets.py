@@ -7,6 +7,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 from pytz import timezone
 from time import mktime
+from utils.sqlite import create_db, create_table, createuniqueindex, newticket, insertdate, get_datetime, removedate, remove, get_user
 
 
 def ticketmessageembed(server):
@@ -30,7 +31,8 @@ async def ticketembed(user, reason, server):
 
 async def ticketautocloseembed(server):
     async def timetounix():
-        mst = timezone('EST')  # no reason to configure, discord automatically sets to your timezone using Relative time.
+        mst = timezone(
+            'EST')  # no reason to configure, discord automatically sets to your timezone using Relative time.
 
         time_to_run = datetime.now(mst) + timedelta(hours=48)
 
@@ -110,6 +112,8 @@ class Ticketmodal(ui.Modal, title='Ticket Creation'):
                 await ticketchan.send(
                     embed=await ticketembed(interaction.user, self.reason, interaction.guild),
                     view=ticketbuttonpanel())
+            conn = await create_db(f"storage/tickets.db")
+            await newticket(conn, interaction.user, ticketchan.id)  # Ticket added to database here.
         except Exception as e:
             print(e)
 
@@ -125,6 +129,8 @@ class ticketbuttonpanel(discord.ui.View):
         try:
             logchannel = discord.utils.get(interaction.guild.channels,
                                            id=1155617191828410418)
+            conn = await create_db(f"storage/tickets.db")
+            user = await get_user(conn, interaction.channel.id)
             if logchannel:
                 transcriptdm = await chat_exporter.export(
                     interaction.channel,
@@ -146,10 +152,11 @@ class ticketbuttonpanel(discord.ui.View):
                     filename=f"transcript-{interaction.channel.name}.html",
                 )
 
-                await interaction.user.send(file=transcript_file_to_dm)
+                await user.send(file=transcript_file_to_dm)
                 await logchannel.send(file=transcript_file_to_channel)
 
             await interaction.channel.delete()
+            await remove(conn, user)
         except Exception as e:
             print(e)
 
@@ -161,42 +168,15 @@ class ticketbuttonpanel(discord.ui.View):
             if interaction.user.guild_permissions.manage_channels:
                 await interaction.response.send_message(content="Timer started.", ephemeral=True)
                 await interaction.channel.send(embed=await ticketautocloseembed(interaction.guild))
-
-                def check(m: discord.Message):  # m = discord.Message.
-                    return m.author.id == interaction.user.id and m.channel.id == interaction.channel.id
-
+                conn = await create_db(f"storage/tickets.db")
+                await insertdate(conn, interaction.channel.id, datetime.now() + timedelta(days=2))
                 try:
-                    msg = await interaction.client.wait_for('message', check=check,
+                    msg = await interaction.client.wait_for('message',
                                                             timeout=172800)  # 48 hours in seconds.
                     await interaction.channel.send(f"Timer cancelled.")
-                except asyncio.TimeoutError:  # runs from here if the above timeout ends.
-                    logchannel = discord.utils.get(interaction.guild.channels,
-                                                   id=1155617191828410418)
-                    if logchannel:
-                        transcriptdm = await chat_exporter.export(
-                            interaction.channel,
-                        )
-                        transcripttochannel = await chat_exporter.export(
-                            interaction.channel,
-                        )
-                        if transcriptdm is None:
-                            return
-                        if transcripttochannel is None:
-                            return
-
-                        transcript_file_to_dm = discord.File(
-                            io.BytesIO(transcriptdm.encode()),
-                            filename=f"transcript-{interaction.channel.name}.html",
-                        )
-                        transcript_file_to_channel = discord.File(
-                            io.BytesIO(transcripttochannel.encode()),
-                            filename=f"transcript-{interaction.channel.name}.html",
-                        )
-
-                        await interaction.user.send(file=transcript_file_to_dm)
-                        await logchannel.send(file=transcript_file_to_channel)
-
-                    await interaction.channel.delete()
+                    await removedate(conn, interaction.channel.id)
+                except asyncio.TimeoutError:
+                    pass
             else:
                 await interaction.response.send_message(content="You don't have permission to do that.", ephemeral=True)
         except Exception as e:

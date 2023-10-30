@@ -1,4 +1,5 @@
 from discord.ext import commands
+from utils.sqlite import ticket
 
 
 class System(commands.Cog):
@@ -8,6 +9,7 @@ class System(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.client.wait_until_ready()
+        await ticket()
         print(f'We have logged in as {self.client.user}')
 
     @commands.command()
