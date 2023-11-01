@@ -32,6 +32,9 @@ class logginglisteners(commands.Cog):
     async def on_message_edit(self, message_before: discord.Message, message_after: discord.Message):
         try:
 
+            if message_before.author.id == self.bot.user.id:
+                return
+
             if loggingchannel:
                 if message_before.channel.id == loggingchannel:
                     return
