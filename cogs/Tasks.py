@@ -1,5 +1,5 @@
+import os
 from datetime import datetime
-import time
 from utils.sqlite import get_alltickets, create_db, remove
 import discord
 from discord.ext import commands, tasks
@@ -16,6 +16,8 @@ class tasksfile(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.bot.wait_until_ready()
+        if not os.path.exists(f"storage/"):
+            os.makedirs(f"storage/")
         if not self.checktickets.is_running():
             self.checktickets.start()
 
