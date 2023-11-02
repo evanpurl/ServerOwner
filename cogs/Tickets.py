@@ -7,7 +7,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 from pytz import timezone
 from time import mktime
-from utils.sqlite import create_db, create_table, createuniqueindex, newticket, insertdate, get_datetime, removedate, remove, get_user
+from utils.sqlite import create_db, newticket, insertdate, removedate, remove, get_user
 
 
 def ticketmessageembed(server):
