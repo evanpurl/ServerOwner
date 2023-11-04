@@ -30,4 +30,4 @@ async def log_embed(logname, logdata, bot):
     for index, value in enumerate(logdata):
         embed.add_field(name=logdata[index][0], value=logdata[index][1])
     embed.set_thumbnail(url=bot.user.avatar)
-    return  embed
+    return embed

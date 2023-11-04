@@ -20,11 +20,11 @@ load_dotenv()
 
 try:
     exec(open('settings.py').read())
-except:
+except Exception as e:
     print(Fore.RED + '[!] Database Failure.' + Fore.RESET)
 
 color = 0xfd83ff
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 
 client = commands.Bot(command_prefix=".", case_insensitive=True, owner_id=int(os.environ.get('OWNERID')),
