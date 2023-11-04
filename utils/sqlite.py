@@ -113,3 +113,43 @@ async def ticket():
         print(f"Ticket database has been set up.")
     except Error as e:
         print(e)
+
+
+async def get_warnings(conn, userid):
+    try:
+        c = conn.cursor()
+        c.execute(""" SELECT reason FROM warnings WHERE userid=? """, [userid])
+        option = c.fetchall()
+        c.close()
+        conn.close()
+        if option:
+            return option
+        else:
+            return None
+
+    except Exception or Error as e:
+        print(f"get warnings: {e}")
+
+
+async def insert_warning(conn, configlist):
+    # config list should be a length of 2.
+    try:
+        datatoinsert = f""" INSERT INTO warnings(userid, reason) VALUES( ?, ?) """
+        c = conn.cursor()
+        c.execute(datatoinsert, (configlist[0], str(configlist[1])))
+        conn.commit()
+        c.close()
+
+    except Error or Exception as e:
+        print(f"insert warning: {e}")
+
+
+async def remove_warnings(conn, user):
+    try:
+        datatoinsert = f""" DELETE from warnings WHERE userid=? """
+        c = conn.cursor()
+        c.execute(datatoinsert, (user,))
+        conn.commit()
+        c.close()
+    except Error or Exception as e:
+        print(f"Remove warnings: {e}")

@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from utils.sqlite import get_alltickets, create_db, remove
+from utils.sqlite import get_alltickets, create_db, remove, create_table
 import discord
 from discord.ext import commands, tasks
 import chat_exporter, io
@@ -16,8 +16,11 @@ class tasksfile(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.bot.wait_until_ready()
-        if not os.path.exists(f"storage/"):
-            os.makedirs(f"storage/")
+        if not os.path.exists(f"storage/1155530172997566506"):
+            os.makedirs(f"storage/1155530172997566506")
+        db = await create_db(f"storage/1155530172997566506/moderation.db")  # change server id here.
+        await create_table(db,
+                           """CREATE TABLE IF NOT EXISTS warnings ( userid bigint NOT NULL, reason text);""")
         if not self.checktickets.is_running():
             self.checktickets.start()
 
