@@ -7,7 +7,7 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 from pytz import timezone
 from time import mktime
-from utils.sqlite import create_db, newticket, insertdate, removedate, remove, get_user
+from utils.sqlite import create_db, newticket, insertdate, removedate, remove, get_user, if_user_ticket
 
 
 def ticketmessageembed(server):
@@ -261,6 +261,20 @@ class ticketcmd(commands.Cog):
     async def onerror(self, interaction: discord.Interaction, error: app_commands.MissingPermissions):
         await interaction.response.send_message(content=error,
                                                 ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        try:
+            conn = await create_db(f"storage/tickets.db")
+            ticket = await if_user_ticket(conn, member)
+            if ticket:
+                channel = await discord.utils.get(member.guild.channels, id=ticket[1])
+                if channel:
+                    await channel.delete()
+                await remove(conn, member)
+            conn.close()
+        except Exception as e:
+            print(f"on_member_remove ticket deletion: {e}")
 
 
 async def setup(bot):
