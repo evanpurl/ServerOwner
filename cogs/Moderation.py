@@ -27,7 +27,7 @@ class moderationcmds(commands.Cog):
                 logchannel = discord.utils.get(interaction.guild.channels, id=loggingchannel)
                 if logchannel:
                     await logchannel.send(
-                        embed=await log_embed("Warning Created", [["User", user.name], ["Reason", reason]], self.bot))
+                        embed=await log_embed(f"A new warning has been created by {interaction.user.mention}!", "Warning Created", [["User", user.name], ["Reason", reason]], self.bot))
                     #
             num_reasons = await get_warnings(db, user.id)
             if num_reasons:
@@ -65,7 +65,7 @@ class moderationcmds(commands.Cog):
                 logchannel = discord.utils.get(interaction.guild.channels, id=loggingchannel)
                 if logchannel:
                     await logchannel.send(
-                        embed=await log_embed("Warnings Cleared", [["User", user.name]], self.bot))
+                        embed=await log_embed(f"All warnings for {user.mention} have been cleared!", f"Description goes here", "Warnings Cleared", [["User", user.name]], self.bot))
                     #
             await interaction.response.send_message(content=f"Warnings for user {user.mention} have been cleared.",
                                                     ephemeral=private_msg)
@@ -83,7 +83,7 @@ class moderationcmds(commands.Cog):
             if loggingchannel:
                 logchannel = discord.utils.get(guild.channels, id=loggingchannel)
                 if logchannel:
-                    await logchannel.send(embed=await log_embed("User Banned", [["User", user.name]], self.bot))
+                    await logchannel.send(embed=await log_embed(f"{user.mention} has been banned!", "User Banned", [["User", user.name]], self.bot))
                     #
 
         except Exception as e:

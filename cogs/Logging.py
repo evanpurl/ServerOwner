@@ -20,7 +20,7 @@ class logginglisteners(commands.Cog):
                     return
                 channel = discord.utils.get(message.guild.channels, id=loggingchannel)
                 if channel:
-                    await channel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Message Edit!", [["Channel:", message.channel.mention], ["Message:", message.content[:1000]]], self.bot))
+                    await channel.send(embed=await log_embed(f"A message has been deleted!", "ServerOwner | Action Log!", [["Channel:", message.channel.mention], ["Message:", message.content[:1000]]], self.bot))
         except Exception as e:
             print(e)
 
@@ -36,7 +36,7 @@ class logginglisteners(commands.Cog):
                     return
                 channel = discord.utils.get(message_before.guild.channels, id=loggingchannel)
                 if channel:
-                    await channel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Message Edit!", [["Channel:", channel.mention], ["Before:", message_before.content[:1000]], ["Before:", message_after.content[:1000]], ["Link:", message_after.jump_url]], self.bot))
+                    await channel.send(embed=await log_embed(f"A message has been edited!", "ServerOwner | Action Log!", [["Channel:", channel.mention], ["Before:", message_before.content[:1000]], ["After:", message_after.content[:1000]], ["Link:", message_after.jump_url]], self.bot))
         except Exception as e:
             print(e)
 
@@ -47,7 +47,7 @@ class logginglisteners(commands.Cog):
             if loggingchannel:
                 logchannel = discord.utils.get(channel.guild.channels, id=loggingchannel)
                 if logchannel:
-                    await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Channel Creation!", [["Channel:", channel.mention], ["Name:", channel.name]], self.bot))
+                    await logchannel.send(embed=await log_embed(f"A new channel has been created!", "ServerOwner | Action Log!", [["Channel:", channel.mention], ["Name:", channel.name]], self.bot))
 
         except Exception as e:
             print(f"Channel create: {e}")
@@ -59,7 +59,7 @@ class logginglisteners(commands.Cog):
             if loggingchannel:
                 logchannel = discord.utils.get(channel.guild.channels, id=loggingchannel)
                 if logchannel:
-                    await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Channel Deletion!", [["Channel:", channel.name]], self.bot))
+                    await logchannel.send(embed=await log_embed(f"A channel has been deleted!", "ServerOwner | Action Log!", [["Channel:", channel.name]], self.bot))
                     return
         except Exception as e:
             print(f"Channel delete: {e}")
@@ -72,14 +72,14 @@ class logginglisteners(commands.Cog):
                 if loggingchannel:
                     logchannel = discord.utils.get(channel_after.guild.channels, id=loggingchannel)
                     if logchannel:
-                        await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Channel Name Change!", [["Before:", channel_before.name], ["After:", channel_after.mention]], self.bot))
+                        await logchannel.send(embed=await log_embed(f"A channel's name has been changed!", "ServerOwner | Action Log!", [["Before:", channel_before.name], ["After:", channel_after.mention]], self.bot))
                         return
             if channel_before.topic != channel_after.topic:
 
                 if loggingchannel:
                     logchannel = discord.utils.get(channel_after.guild.channels, id=loggingchannel)
                     if logchannel:
-                        await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Channel Topic Change!", [["Before:", channel_before.topic], ["After:", channel_after.topic], ["Channel Name:", channel_after.name], ["Channel:", channel_after.mention]], self.bot))
+                        await logchannel.send(embed=await log_embed(f"A channel's topic has been changed!", "ServerOwner | Action Log!", [["Before:", channel_before.topic], ["After:", channel_after.topic], ["Channel Name:", channel_after.name], ["Channel:", channel_after.mention]], self.bot))
                         return
         except Exception as e:
             print(f"Channel update: {e}")
@@ -91,7 +91,7 @@ class logginglisteners(commands.Cog):
             if loggingchannel:
                 logchannel = discord.utils.get(role.guild.channels, id=loggingchannel)
                 if logchannel:
-                    await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Role Creation!", [["Name:", role.name]], self.bot))
+                    await logchannel.send(embed=await log_embed(f"A role has been created!", "ServerOwner | Action Log!", [["Name:", role.name]], self.bot))
                     return
         except Exception as e:
             print(f"Role create: {e}")
@@ -103,7 +103,7 @@ class logginglisteners(commands.Cog):
             if loggingchannel:
                 logchannel = discord.utils.get(role.guild.channels, id=loggingchannel)
                 if logchannel:
-                    await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Role Deletion!", [["Role:", role.name], ["Name:", role.name]], self.bot))
+                    await logchannel.send(embed=await log_embed(f"A role has been deleted!", "ServerOwner | Action Log!", [["Role:", role.name], ["Name:", role.name]], self.bot))
                     return
         except Exception as e:
             print(f"Role delete: {e}")
@@ -116,7 +116,7 @@ class logginglisteners(commands.Cog):
                 if loggingchannel:
                     logchannel = discord.utils.get(role_after.guild.channels, id=loggingchannel)
                     if logchannel:
-                        await logchannel.send(embed=await log_embed(f"Description goes here", "ServerOwner | Role Change!", [["Before:", role_before.name], ["After:", role_after.name]], self.bot))
+                        await logchannel.send(embed=await log_embed(f"A role name has been updated!", "ServerOwner | Action Log!", [["Before:", role_before.name], ["After:", role_after.name]], self.bot))
                         return
         except Exception as e:
             print(f"Role update: {e}")
