@@ -15,12 +15,12 @@ class moderationcmds(commands.Cog):
 
     @app_commands.command(name="warn", description="Moderation command to warn a server member")
     @app_commands.checks.has_permissions(manage_messages=True)
-    async def warn(self, interaction: discord.Interaction, user: discord.Member, reason: str):
+    async def warn(self, interaction: discord.Interaction, user: discord.Member, reason: str, private: bool):
         try:
             db = await create_db(f"storage/{interaction.guild.id}/moderation.db")
             await insert_warning(db, [user.id, reason])
             await interaction.response.send_message(
-                content=f"User {user.mention} has been warned for reason **{reason}**.", ephemeral=True)
+                embed=await log_embed(f"You have warned {user.mention}!", "Warning Created", [["Reason", reason]], self.bot), ephemeral=private)
             #  Logging feature
 
             if loggingchannel:
