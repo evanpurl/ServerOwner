@@ -17,7 +17,6 @@ class moderationcmds(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     async def warn(self, interaction: discord.Interaction, user: discord.Member, reason: str):
         try:
-            #  Disable / enable goes here
             db = await create_db(f"storage/{interaction.guild.id}/moderation.db")
             await insert_warning(db, [user.id, reason])
             await interaction.response.send_message(

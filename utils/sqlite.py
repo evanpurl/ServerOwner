@@ -75,6 +75,13 @@ async def get_user(conn, channel):
     return option
 
 
+async def if_user_ticket(conn, user):
+    c = conn.cursor()
+    c.execute(""" SELECT userid, channel FROM tickets WHERE userid=? """, [user.id])
+    option = c.fetchall()
+    return option
+
+
 async def get_alltickets(conn):
     c = conn.cursor()
     c.execute(""" SELECT * FROM tickets""")
