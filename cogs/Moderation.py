@@ -65,7 +65,7 @@ class moderationcmds(commands.Cog):
                 logchannel = discord.utils.get(interaction.guild.channels, id=loggingchannel)
                 if logchannel:
                     await logchannel.send(
-                        embed=await log_embed(f"All warnings for {user.mention} have been cleared!", f"Description goes here", "Warnings Cleared", [["User", user.name]], self.bot))
+                        embed=await log_embed(f"All warnings for {user.mention} have been cleared!", f"Warnings Cleared", [["User", user.name]], self.bot))
                     #
             await interaction.response.send_message(content=f"Warnings for user {user.mention} have been cleared.",
                                                     ephemeral=private_msg)
