@@ -43,7 +43,8 @@ class logginglisteners(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: discord.TextChannel):
         try:
-
+            if channel.type == "category":
+                return
             if loggingchannel:
                 logchannel = discord.utils.get(channel.guild.channels, id=loggingchannel)
                 if logchannel:
@@ -55,7 +56,8 @@ class logginglisteners(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.TextChannel):
         try:
-
+            if channel.type == "category":
+                return
             if loggingchannel:
                 logchannel = discord.utils.get(channel.guild.channels, id=loggingchannel)
                 if logchannel:
@@ -67,6 +69,8 @@ class logginglisteners(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_update(self, channel_before: discord.TextChannel, channel_after: discord.TextChannel):
         try:
+            if channel_before.type == "category":  # If channel category, ignore and end event.
+                return
             if channel_before.name != channel_after.name:
 
                 if loggingchannel:

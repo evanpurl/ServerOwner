@@ -127,6 +127,8 @@ class ticketbuttonpanel(discord.ui.View):
                        custom_id=f"gsticket:close")
     async def close_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         try:
+            button.disabled = True
+            await interaction.response.edit_message(view=self)
             logchannel = discord.utils.get(interaction.guild.channels,
                                            id=1155617191828410418)
             conn = await create_db(f"storage/tickets.db")
@@ -151,14 +153,15 @@ class ticketbuttonpanel(discord.ui.View):
                     io.BytesIO(transcripttochannel.encode()),
                     filename=f"transcript-{interaction.channel.name}.html",
                 )
-
-                await user.send(file=transcript_file_to_dm)
+                if user:
+                    user_send = interaction.client.get_user(int(user))
+                    await user_send.send(file=transcript_file_to_dm)
+                    await remove(conn, user_send)
                 await logchannel.send(file=transcript_file_to_channel)
 
             await interaction.channel.delete()
-            await remove(conn, user)
         except Exception as e:
-            print(e)
+            print(f"Ticket close: {e}")
 
     @commands.has_permissions(manage_channels=True)
     @discord.ui.button(label="Auto-Close Ticket", emoji="⏲️", style=discord.ButtonStyle.gray,

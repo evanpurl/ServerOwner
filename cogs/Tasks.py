@@ -37,8 +37,6 @@ class tasksfile(commands.Cog):
                                                        id=1155617191828410418)
                         if logchannel:
                             channel = discord.utils.get(guild.channels, id=int(a[1]))
-                            user = self.bot.get_user(int(a[0]))
-                            print(f"Closing ticket from user {user.name}")
                             transcriptdm = await chat_exporter.export(
                                 channel,
                             )
@@ -58,7 +56,8 @@ class tasksfile(commands.Cog):
                                 io.BytesIO(transcripttochannel.encode()),
                                 filename=f"transcript-{channel.name}.html",
                             )
-
+                            user = self.bot.get_user(int(a[0]))
+                            print(f"Closing ticket from user {user.name}")
                             await user.send(file=transcript_file_to_dm)
                             await logchannel.send(file=transcript_file_to_channel)
 
