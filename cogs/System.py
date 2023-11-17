@@ -1,3 +1,5 @@
+import os
+
 from discord.ext import commands
 from utils.sqlite import ticket
 
@@ -10,6 +12,8 @@ class System(commands.Cog):
     async def on_ready(self):
         await self.client.wait_until_ready()
         await ticket()
+        if not os.path.exists(f"storage/info/"):
+            os.makedirs(f"storage/info/")
         print(f'We have logged in as {self.client.user}')
 
     @commands.command()
