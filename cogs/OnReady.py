@@ -13,7 +13,7 @@ class onreadyfunction(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.client.wait_until_ready()
+        await self.bot.wait_until_ready()
         await ticket()
         if not os.path.exists(f"storage/info/"):
             os.makedirs(f"storage/info/")
