@@ -1,8 +1,7 @@
 import datetime
-import discord
 
+import discord
 from discord.ext import commands
-from settings import *
 
 
 class MemberFunctions(commands.Cog):
